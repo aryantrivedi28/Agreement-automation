@@ -11,6 +11,7 @@ services:
     environment:
       - FORCE_SSL=${HOST}
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/docuseal
+      - SECRET_KEY_BASE=supersecretkey
 
   postgres:
     image: postgres:15
@@ -21,10 +22,10 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: docuseal
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   caddy:
     image: caddy:latest
