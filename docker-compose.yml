@@ -1,40 +1,28 @@
+version: '3.8'
+
 services:
-  app:
-    depends_on:
-      postgres:
-        condition: service_healthy
+  docuseal:
     image: docuseal/docuseal:latest
     ports:
-      - 3000:3000
-    volumes:
-      - ./docuseal:/data/docuseal
+      - "3000:3000"
     environment:
-      - FORCE_SSL=${HOST}
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/docuseal
-      - SECRET_KEY_BASE=supersecretkey
+      - DATABASE_URL=postgresql://docuseal:password@postgres:5432/docuseal
+      - SECRET_KEY_BASE=asdfghjklmnbvcxzqwertyuiop
+      - HOST=https://agreement-automation.onrender.com
+    depends_on:
+      - postgres
+    volumes:
+      - docuseal_data:/data
 
   postgres:
     image: postgres:15
-    volumes:
-      - './pg_data:/var/lib/postgresql/data'
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: docuseal
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      - POSTGRES_DB=docuseal
+      - POSTGRES_USER=docuseal
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-  caddy:
-    image: caddy:latest
-    command: caddy reverse-proxy --from $HOST --to app:3000
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-    volumes:
-      - .:/data
-    environment:
-      - HOST=${HOST}
+volumes:
+  docuseal_data:
+  postgres_data:
