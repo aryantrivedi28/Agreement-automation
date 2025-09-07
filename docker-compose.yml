@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://docuseal:password@postgres:5432/docuseal
+      - DATABASE_URL=postgresql://aryantrivedi:wceXPX4w6zCdiEAcojTagJlKIyGqxmyA@dpg-d2ul100gjchc73aenc20-a/finzie
       - SECRET_KEY_BASE=asdfghjklmnbvcxzqwertyuiop
       - HOST=https://agreement-automation.onrender.com
     depends_on:
@@ -17,9 +17,9 @@ services:
   postgres:
     image: postgres:15
     environment:
-      - POSTGRES_DB=docuseal
-      - POSTGRES_USER=docuseal
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=finzie
+      - POSTGRES_USER=aryantrivedi
+      - POSTGRES_PASSWORD=wceXPX4w6zCdiEAcojTagJlKIyGqxmyA
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
