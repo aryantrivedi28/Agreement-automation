@@ -45,6 +45,34 @@ module Api
       render json: Templates::SerializeForApi.call(@template)
     end
 
+
+    def create
+      template = Template.new(name: params[:name])
+
+      # Attach uploaded PDFs
+      if params[:documents].present?
+        Array(params[:documents]).each do |doc|
+          template.documents.attach(doc)
+        end
+      end
+
+      # Optional: Add fields (example signature/text/date)
+      if params[:fields].present?
+        template.fields = params[:fields]
+      end
+
+      # Optional: assign submitters
+      if params[:submitters].present?
+        template.submitters = params[:submitters]
+      end
+
+      if template.save
+        render json: Templates::SerializeForApi.call(template), status: :created
+      else
+        render json: { errors: template.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
     def update
       if (folder_name = params[:folder_name] || params.dig(:template, :folder_name))
         @template.folder = TemplateFolders.find_or_create_by_name(current_user, folder_name)
