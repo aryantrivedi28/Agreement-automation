@@ -4,13 +4,18 @@ services:
   docuseal:
     image: docuseal/docuseal:latest
     ports:
-      - "3000:3000"
+      - "3001:3000"  # Changed from 3000 to avoid conflict
     environment:
-      - DATABASE_URL=postgresql://aryantrivedi:wceXPX4w6zCdiEAcojTagJlKIyGqxmyA@dpg-d2ul100gjchc73aenc20-a/finzie
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://aryantrivedi:wceXPX4w6zCdiEAcojTagJlKIyGqxmyA@dpg-d2ul100gjchc73aenc20-a.oregon-postgres.render.com:5432/finzie
       - SECRET_KEY_BASE=asdfghjklmnbvcxzqwertyuiop
       - HOST=https://agreement-automation.onrender.com
+      - REDIS_URL=redis://redis:6379
+      - RAILS_MAX_THREADS=5
+      - WEB_CONCURRENCY=2
     depends_on:
       - postgres
+      - redis
     volumes:
       - docuseal_data:/data
 
@@ -23,6 +28,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
 volumes:
   docuseal_data:
   postgres_data:
+  redis_data:
